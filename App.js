@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
-import { NativeBaseProvider, Box } from "native-base";
+import { StyleSheet, View } from "react-native";
+import { NativeBaseProvider } from "native-base";
 
 import { TrainingScreen } from "./src/features/training/screens/training-screen";
 
