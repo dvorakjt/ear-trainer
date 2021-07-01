@@ -1,41 +1,25 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { Center, Flex, Text, Divider } from "native-base";
 
 import { SafeArea } from "../../../components/utility/safe-area.component";
+import { PlayButtonGroup } from "../components/play-button-group.component";
+import { AnswerButtonGroup } from "../components/answer-button-group.component";
+import { MusicView } from "../components/music-view.component";
 
 export const TrainingScreen = () => {
   return (
     <SafeArea style={{ flex: 1 }}>
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Text>Practice Mode: Intervals</Text>
-      </View>
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Text>Music Notation goes here</Text>
-      </View>
-      <View
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "row",
-        }}
-      >
-        <Text>Play exercise</Text>
-        <Text>Compare to solution</Text>
-      </View>
-      <View
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "row",
-        }}
-      >
-        <Text>Sharp</Text>
-        <Text>In Tune</Text>
-        <Text>Flat</Text>
-      </View>
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Text>Submit</Text>
-      </View>
+      <Center flex={1}>
+        <Flex flex={0.75} justifyContent="space-between" alignItems="center">
+          <Text fontSize="xs" bold>
+            Practice Mode: Tuning Unisons
+          </Text>
+          <MusicView />
+          <PlayButtonGroup />
+          <Divider />
+          <AnswerButtonGroup />
+        </Flex>
+      </Center>
     </SafeArea>
   );
 };
