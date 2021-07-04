@@ -13,7 +13,7 @@ export const TrainingScreen = () => {
     <SafeArea style={{ flex: 1 }}>
       <Center flex={1}>
         <Flex flex={1} align="center">
-          <Spacer />
+          <Spacer position="top" size="xxxl" />
           <Text fontSize="xs" bold>
             Practice Mode: Tuning Unisons
           </Text>
