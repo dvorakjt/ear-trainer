@@ -27,27 +27,32 @@ export const MusicView = () => {
   const VF = Vex.Flow;
 
   const context = new ReactNativeSVGContext(NotoFontPack, {
-    width: 400,
-    height: 400,
-  }); //for now, defaults to 400x400...is there a better way to set this default?
-  //create a stave and set the context
-  const stave = new VF.Stave(100, 150, 200);
+    width: 143,
+    height: 175,
+  });
+  const stave = new VF.Stave(10, 30, 120); //horizontal offset, vertical offset, width of staff
   stave.setContext(context);
   stave.setClef("treble");
 
   //create notes and a voice
   const notes = [
     // a quarter note C
-    new VF.StaveNote({ clef: "treble", keys: ["c/4"], duration: "q" }),
+    new VF.StaveNote({
+      clef: "treble",
+      keys: ["a/4"],
+      duration: "q",
+    }).setStem(new VF.Stem({ hide: true })),
 
     //quarter note d
-    new VF.StaveNote({ clef: "treble", keys: ["c/4"], duration: "q" }),
+    new VF.StaveNote({ clef: "treble", keys: ["a/4"], duration: "q" }).setStem(
+      new VF.Stem({ hide: true })
+    ),
   ];
 
   const voice = new VF.Voice({ num_beats: 2, beat_value: 4 });
   voice.addTickables(notes);
 
-  const formatter = new VF.Formatter().joinVoices([voice]).format([voice], 150);
+  const formatter = new VF.Formatter().joinVoices([voice]).format([voice], 100);
   stave.draw();
   voice.draw(context, stave);
 

@@ -13,17 +13,18 @@ export const TrainingScreen = () => {
     <SafeArea style={{ flex: 1 }}>
       <Center flex={1}>
         <Flex flex={1} align="center">
-          <Spacer position="top" size="xxxl" />
+          <Spacer position="top" size="lg" />
           <Text fontSize="xs" bold>
             Practice Mode: Tuning Unisons
           </Text>
+          <Spacer position="bottom" size="xl" />
           <MusicView />
+          <Spacer position="bottom" size="xl" />
           <PlayButtonGroup />
           <Spacer />
           <Divider />
-          <Spacer>
-            <AnswerButtonGroup />
-          </Spacer>
+          <Spacer position="bottom" size="xxl" />
+          <AnswerButtonGroup />
         </Flex>
       </Center>
     </SafeArea>
