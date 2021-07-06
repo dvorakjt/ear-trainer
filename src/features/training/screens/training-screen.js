@@ -18,7 +18,7 @@ export const TrainingScreen = () => {
             Practice Mode: Tuning Unisons
           </Text>
           <Spacer position="bottom" size="xl" />
-          <MusicView />
+          <MusicView clef="bass" pitches={["a/3", "a/3"]} />
           <Spacer position="bottom" size="xl" />
           <PlayButtonGroup />
           <Spacer />

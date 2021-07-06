@@ -15,13 +15,13 @@ export const AnswerButtonGroup = () => {
         }}
       >
         <Button colorScheme="teal" mr={2}>
-          Sharp
-        </Button>
-        <Button colorScheme="teal" mr={2}>
-          In Tune
-        </Button>
-        <Button colorScheme="teal" mr={2}>
           Flat
+        </Button>
+        <Button colorScheme="teal" mr={2}>
+          In-tune
+        </Button>
+        <Button colorScheme="teal" mr={2}>
+          Sharp
         </Button>
       </Button.Group>
     </View>

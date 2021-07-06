@@ -12,11 +12,17 @@ export const PlayButtonGroup = () => {
         md: 0,
       }}
     >
-      <Button colorScheme="teal" mr={2}>
-        Play exercise
+      <Button
+        colorScheme="violet"
+        mr={2}
+        _text={{
+          color: "white",
+        }}
+      >
+        Play Exercise
       </Button>
       <Button
-        colorScheme="danger"
+        colorScheme="violet"
         _text={{
           color: "white",
         }}

@@ -7,23 +7,7 @@ import {
 } from "standalone-vexflow-context";
 import Vex from "vexflow";
 
-// export const MusicView = () => {
-//   return (
-//     <Square size="xl" bg="primary.400">
-//       <Box
-//         _text={{
-//           fontWeight: "bold",
-//           fontSize: "lg",
-//           color: "white",
-//         }}
-//       >
-//         Music Notation Goes Here
-//       </Box>
-//     </Square>
-//   );
-// };
-
-export const MusicView = () => {
+export const MusicView = ({ clef = "treble", pitches = ["a/4", "a/4"] }) => {
   const VF = Vex.Flow;
 
   const context = new ReactNativeSVGContext(NotoFontPack, {
@@ -32,22 +16,16 @@ export const MusicView = () => {
   });
   const stave = new VF.Stave(10, 30, 120); //horizontal offset, vertical offset, width of staff
   stave.setContext(context);
-  stave.setClef("treble");
+  stave.setClef(clef);
 
   //create notes and a voice
-  const notes = [
-    // a quarter note C
-    new VF.StaveNote({
-      clef: "treble",
-      keys: ["a/4"],
+  const notes = pitches.map((pitch) => {
+    return new VF.StaveNote({
+      clef: clef,
+      keys: [pitch],
       duration: "q",
-    }).setStem(new VF.Stem({ hide: true })),
-
-    //quarter note d
-    new VF.StaveNote({ clef: "treble", keys: ["a/4"], duration: "q" }).setStem(
-      new VF.Stem({ hide: true })
-    ),
-  ];
+    }).setStem(new VF.Stem({ hide: true }));
+  });
 
   const voice = new VF.Voice({ num_beats: 2, beat_value: 4 });
   voice.addTickables(notes);
