@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 // import { Square, Box } from "native-base";
 import { View, Pressable } from "react-native";
 import {
@@ -8,6 +8,11 @@ import {
 import Vex from "vexflow";
 
 export const MusicView = ({ clef = "treble", pitches = ["a/4", "a/4"] }) => {
+  const [notesState, setNotesState] = useState([
+    { playing: false },
+    { playing: false },
+  ]);
+
   const VF = Vex.Flow;
 
   const context = new ReactNativeSVGContext(NotoFontPack, {
@@ -27,6 +32,13 @@ export const MusicView = ({ clef = "treble", pitches = ["a/4", "a/4"] }) => {
     }).setStem(new VF.Stem({ hide: true }));
   });
 
+  notes.forEach((note, index) => {
+    note.setStyle({
+      fillStyle: notesState[index].playing ? "blue" : "black",
+      strokeStyle: notesState[index].playing ? "blue" : "black",
+    });
+  });
+
   const voice = new VF.Voice({ num_beats: 2, beat_value: 4 });
   voice.addTickables(notes);
 
@@ -37,7 +49,7 @@ export const MusicView = ({ clef = "treble", pitches = ["a/4", "a/4"] }) => {
   return (
     <Pressable
       onPress={({ nativeEvent }) => {
-        notes.forEach((note) => {
+        notes.forEach((note, index) => {
           const boundingBox = note.getBoundingBox();
           const { locationX, locationY } = nativeEvent;
           if (
@@ -46,7 +58,11 @@ export const MusicView = ({ clef = "treble", pitches = ["a/4", "a/4"] }) => {
             locationY >= boundingBox.y &&
             locationY <= boundingBox.y + boundingBox.h
           ) {
-            console.log(note);
+            setNotesState([
+              ...notesState,
+              (notesState[index].playing = !notesState[index].playing),
+            ]);
+            console.log(index);
           }
         });
       }}
