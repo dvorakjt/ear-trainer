@@ -1,6 +1,6 @@
 import React from "react";
 // import { Square, Box } from "native-base";
-import { View, Text } from "react-native";
+import { View, Pressable } from "react-native";
 import {
   ReactNativeSVGContext,
   NotoFontPack,
@@ -34,5 +34,24 @@ export const MusicView = ({ clef = "treble", pitches = ["a/4", "a/4"] }) => {
   stave.draw();
   voice.draw(context, stave);
 
-  return <View>{context.render()}</View>;
+  return (
+    <Pressable
+      onPress={({ nativeEvent }) => {
+        notes.forEach((note) => {
+          const boundingBox = note.getBoundingBox();
+          const { locationX, locationY } = nativeEvent;
+          if (
+            locationX >= boundingBox.x &&
+            locationX <= boundingBox.x + boundingBox.w &&
+            locationY >= boundingBox.y &&
+            locationY <= boundingBox.y + boundingBox.h
+          ) {
+            console.log(note);
+          }
+        });
+      }}
+    >
+      <View style={{ transform: [{ scale: 2 }] }}>{context.render()}</View>
+    </Pressable>
+  );
 };
