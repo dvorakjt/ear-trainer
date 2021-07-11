@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-// import { Square, Box } from "native-base";
 import { View, Pressable } from "react-native";
 import {
   ReactNativeSVGContext,
@@ -7,11 +6,40 @@ import {
 } from "standalone-vexflow-context";
 import Vex from "vexflow";
 
-export const MusicView = ({ clef = "treble", pitches = ["a/4", "a/4"] }) => {
+export const MusicView = ({
+  clef = "treble",
+  pitches = ["a/4", "a/4"],
+  instrument = "Bassoon",
+}) => {
+  const STOPPED = 0;
+  const PLAYING = 1;
+  const ENDING = 2;
+
   const [notesState, setNotesState] = useState([
-    { playing: false },
-    { playing: false },
+    { playing: STOPPED },
+    { playing: STOPPED },
   ]);
+
+  const stopNote = (noteIndex) => {
+    setNotesState([...notesState, (notesState[noteIndex].playing = ENDING)]);
+    setTimeout(() => {
+      setNotesState([...notesState, (notesState[noteIndex].playing = STOPPED)]);
+    }, 1000);
+  };
+
+  const playNote = (noteIndex, duration = false) => {
+    if (notesState[noteIndex].playing !== PLAYING) {
+      setNotesState([...notesState, (notesState[noteIndex].playing = PLAYING)]);
+      //if a duration is provided, set a timeout to stop the note.
+      if (duration) {
+        setTimeout(() => stopNote(noteIndex), duration);
+      }
+    }
+  };
+
+  const scheduleAndPlayNotes = (notes, tempo) => {
+    //this function will schedule and play notes in a certain tempo.
+  };
 
   const VF = Vex.Flow;
 
@@ -22,6 +50,7 @@ export const MusicView = ({ clef = "treble", pitches = ["a/4", "a/4"] }) => {
   const stave = new VF.Stave(10, 30, 120); //horizontal offset, vertical offset, width of staff
   stave.setContext(context);
   stave.setClef(clef);
+  stave.setEndBarType(VF.Barline.type.END);
 
   //create notes and a voice
   const notes = pitches.map((pitch) => {
@@ -33,9 +62,24 @@ export const MusicView = ({ clef = "treble", pitches = ["a/4", "a/4"] }) => {
   });
 
   notes.forEach((note, index) => {
+    let color;
+
+    switch (notesState[index].playing) {
+      case STOPPED:
+        color = "black";
+        break;
+      case PLAYING:
+        color = "blue";
+        break;
+      case ENDING:
+        color = "red";
+        break;
+      default:
+        color = "black";
+    }
     note.setStyle({
-      fillStyle: notesState[index].playing ? "blue" : "black",
-      strokeStyle: notesState[index].playing ? "blue" : "black",
+      fillStyle: color,
+      strokeStyle: color,
     });
   });
 
@@ -53,15 +97,16 @@ export const MusicView = ({ clef = "treble", pitches = ["a/4", "a/4"] }) => {
           const boundingBox = note.getBoundingBox();
           const { locationX, locationY } = nativeEvent;
           if (
-            locationX >= boundingBox.x &&
+            locationX >= boundingBox.x - boundingBox.w * 0.2 &&
             locationX <= boundingBox.x + boundingBox.w &&
-            locationY >= boundingBox.y &&
+            locationY >= boundingBox.y - boundingBox.h &&
             locationY <= boundingBox.y + boundingBox.h
           ) {
-            setNotesState([
-              ...notesState,
-              (notesState[index].playing = !notesState[index].playing),
-            ]);
+            if (notesState[index].playing === STOPPED) {
+              playNote(index, 2000);
+            } else {
+              stopNote(index);
+            }
             console.log(index);
           }
         });
