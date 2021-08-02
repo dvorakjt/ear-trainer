@@ -1,46 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { View, Pressable } from "react-native";
+import React, { useState, useRef } from "react";
+import { View, Pressable, Animated } from "react-native";
 import {
   ReactNativeSVGContext,
   NotoFontPack,
 } from "standalone-vexflow-context";
+import { color } from "styled-system";
 import Vex from "vexflow";
+
+import { animateNote } from "../utils/animateNote";
 
 export const MusicView = ({
   clef = "treble",
   pitches = ["a/4", "a/4"],
   instrument = "Bassoon",
 }) => {
-  const STOPPED = 0;
-  const PLAYING = 1;
-  const ENDING = 2;
-
-  const [notesState, setNotesState] = useState([
-    { playing: STOPPED },
-    { playing: STOPPED },
-  ]);
-
-  const stopNote = (noteIndex) => {
-    setNotesState([...notesState, (notesState[noteIndex].playing = ENDING)]);
-    setTimeout(() => {
-      setNotesState([...notesState, (notesState[noteIndex].playing = STOPPED)]);
-    }, 1000);
-  };
-
-  const playNote = (noteIndex, duration = false) => {
-    if (notesState[noteIndex].playing !== PLAYING) {
-      setNotesState([...notesState, (notesState[noteIndex].playing = PLAYING)]);
-      //if a duration is provided, set a timeout to stop the note.
-      if (duration) {
-        setTimeout(() => stopNote(noteIndex), duration);
-      }
-    }
-  };
-
-  const scheduleAndPlayNotes = (notes, tempo) => {
-    //this function will schedule and play notes in a certain tempo.
-  };
-
   const VF = Vex.Flow;
 
   const context = new ReactNativeSVGContext(NotoFontPack, {
@@ -52,6 +25,29 @@ export const MusicView = ({
   stave.setClef(clef);
   stave.setEndBarType(VF.Barline.type.END);
 
+  //create references to each note and states to keep track of their colors
+  let noteRefs = [];
+  for (let i = 0; i < pitches.length; i++) {
+    noteRefs.push({
+      animating: useRef(false),
+      red: useRef(0),
+      green: useRef(0),
+      blue: useRef(0),
+      phase: useRef(0),
+    });
+  }
+
+  let notesStateTemplate = [];
+  noteRefs.forEach((noteRef) => {
+    notesStateTemplate.push({
+      r: noteRef.red.current,
+      g: noteRef.green.current,
+      b: noteRef.blue.current,
+    });
+  });
+
+  const [notesState, setNotesState] = useState(notesStateTemplate);
+
   //create notes and a voice
   const notes = pitches.map((pitch) => {
     return new VF.StaveNote({
@@ -62,24 +58,12 @@ export const MusicView = ({
   });
 
   notes.forEach((note, index) => {
-    let color;
-
-    switch (notesState[index].playing) {
-      case STOPPED:
-        color = "black";
-        break;
-      case PLAYING:
-        color = "blue";
-        break;
-      case ENDING:
-        color = "red";
-        break;
-      default:
-        color = "black";
-    }
+    const r = notesState[index].r;
+    const g = notesState[index].g;
+    const b = notesState[index].b;
     note.setStyle({
-      fillStyle: color,
-      strokeStyle: color,
+      fillStyle: `rgb(${r}, ${g}, ${b})`,
+      strokeStyle: `rgb(${r}, ${g}, ${b})`,
     });
   });
 
@@ -102,12 +86,19 @@ export const MusicView = ({
             locationY >= boundingBox.y - boundingBox.h &&
             locationY <= boundingBox.y + boundingBox.h
           ) {
-            if (notesState[index].playing === STOPPED) {
-              playNote(index, 2000);
-            } else {
-              stopNote(index);
-            }
             console.log(index);
+            const { animating, red, green, blue, phase } = noteRefs[index];
+            console.log(
+              animating.current,
+              red.current,
+              green.current,
+              blue.current,
+              phase.current
+            );
+            const setThisNotesState = (colorObject) => {
+              setNotesState([...notesState, (notesState[index] = colorObject)]);
+            };
+            animateNote(animating, red, green, blue, phase, setThisNotesState);
           }
         });
       }}
